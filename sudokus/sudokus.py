@@ -3,6 +3,10 @@ import customtkinter as ctk
 from sudoku import Sudoku
 
 
+# This is new version of my game. I commited it to git.
+# Check is everything ok. pls)))
+
+
 def good_array(arr):
     y = (0, 1, 2)
     ans = [[[], [], []],
@@ -34,6 +38,7 @@ class Start(ctk.CTk):
         self.difficulty = None
         self.label = None
         self.game = None
+        self.clock = False
 
         self.start_screen()
 
@@ -119,6 +124,10 @@ class Game(ctk.CTkFrame):
     def __init__(self, parent, difficulty):
         super().__init__(parent)
 
+        # ref
+        self.parent = parent
+        self.parent.clock = True
+
         # getting board
         self.sudoku_board = Sudoku(3).difficulty(difficulty)
         self.left = 0
@@ -139,7 +148,7 @@ class Game(ctk.CTkFrame):
         self.main.place(relx=0, rely=0.1, relheight=0.8, relwidth=1)
 
         # top and bottom
-        self.top = Top(self)
+        self.top = Top(self, self.parent)
         self.top.place(relx=0, rely=0, relwidth=1, relheight=0.1)
 
         self.bottom = Bottom(self)
@@ -268,6 +277,7 @@ class MainFrame(ctk.CTkFrame):
             fg_color='transparent'
         )
         self.win_label.place(anchor='center', relx=0.5, rely=0.5)
+        self.root_window.clock = False
         self.after(3000, self.restart)
 
     def restart(self):
@@ -276,8 +286,11 @@ class MainFrame(ctk.CTkFrame):
 
 
 class Top(ctk.CTkFrame):
-    def __init__(self, parent):
+    def __init__(self, parent, ref):
         super().__init__(parent)
+
+        # ref
+        self.start = ref
 
         # background
         self.bg = ctk.CTkLabel(self, text=' ', bg_color='#1F6AA5')
@@ -299,18 +312,18 @@ class Top(ctk.CTkFrame):
         self.count(self.minutes, self.sec)
 
     def count(self, minutes, sec, *args):
-        if sec > 60:
-            sec = 0
-            minutes += 1
-        if len(str(sec)) < 2:
-            temp = sec
-            sec = f'0{temp}'
-        if len(str(minutes)) < 2:
-            temp = minutes
-            minutes = f'0{temp}'
-        self.timer.configure(text=f'Time  {minutes}:{sec}')
-        self.after(1000, lambda: self.count(int(minutes), int(sec)+1))
-
+        if self.start.clock:
+            if sec > 60:
+                sec = 0
+                minutes += 1
+            if len(str(sec)) < 2:
+                temp = sec
+                sec = f'0{temp}'
+            if len(str(minutes)) < 2:
+                temp = minutes
+                minutes = f'0{temp}'
+            self.timer.configure(text=f'Time  {minutes}:{sec}')
+            self.after(1000, lambda: self.count(int(minutes), int(sec)+1))
 
 
 class Bottom(ctk.CTkFrame):
