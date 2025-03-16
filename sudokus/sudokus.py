@@ -116,7 +116,6 @@ class Start(ctk.CTk):
         self.game = Game(self, self.difficulty.get())
         for i in range(1, 10):
             self.bind(str(i), lambda event: self.game.main.key_press(event))
-        # use this for debug win)
         # self.bind('s', self.game.main.win)
         self.game.place(relx=0, rely=0, relwidth=1, relheight=1)
 
